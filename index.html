@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Shorts Studio — یابنده ترند شورت + پرامپت ویرال Veo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,500&family=Vazirmatn:wght@300;400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a1420; --bg2:#0d1c2a; --panel:rgba(255,255,255,.035);
+  --gold:#d4af37; --gold-soft:#e8c766; --gold-dim:#9a7b1e;
+  --text:#f3ecdc; --muted:#a8b3c0;
+  --red:#ff2d55; --red-soft:#ff6b81;
+  --border:rgba(212,175,55,.22);
+  --serif:'Playfair Display','Vazirmatn',serif;
+  --sans:'Vazirmatn','Inter',sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:var(--sans);background:var(--bg);color:var(--text);line-height:1.8;overflow-x:hidden}
+.bg-ornament{position:fixed;inset:0;pointer-events:none;z-index:0;background:
+ radial-gradient(900px 480px at 82% -12%,rgba(212,175,55,.14),transparent 62%),
+ radial-gradient(760px 420px at 8% 0%,rgba(255,45,85,.10),transparent 58%),
+ radial-gradient(1000px 600px at 50% 120%,rgba(14,165,233,.07),transparent 60%);}
+.wrap{max-width:1020px;margin:0 auto;padding:0 22px;position:relative;z-index:1}
+
+/* header */
+.top{position:sticky;top:0;z-index:50;background:rgba(10,20,32,.85);backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+.top .wrap{display:flex;align-items:center;gap:18px;padding:14px 22px;flex-wrap:wrap}
+.logo{font-family:var(--serif);font-size:20px;letter-spacing:.5px;color:var(--text)}
+.logo b{color:var(--gold);font-weight:700}
+.badge{font-size:13px;color:var(--gold-soft);border:1px solid var(--border);border-radius:999px;padding:3px 12px;letter-spacing:.5px}
+.nav{display:flex;gap:16px;flex:1;flex-wrap:wrap}
+.nav a{color:var(--muted);text-decoration:none;font-size:14px;position:relative;padding-bottom:3px}
+.nav a:hover{color:var(--gold-soft)}
+.nav a::after{content:"";position:absolute;left:0;bottom:0;width:0;height:1px;background:var(--gold);transition:width .25s}
+.nav a:hover::after{width:100%}
+
+/* hero */
+.hero{padding:84px 0 64px;text-align:center;position:relative;z-index:1}
+.eyebrow{display:flex;align-items:center;gap:14px;justify-content:center;color:var(--gold-dim);letter-spacing:3px;font-size:13px;margin-bottom:18px}
+.eyebrow .line{height:1px;width:54px;background:linear-gradient(90deg,transparent,var(--gold));display:inline-block}
+.eyebrow .line:last-child{transform:scaleX(-1)}
+h1{font-family:var(--serif);font-size:clamp(30px,5.4vw,56px);line-height:1.25;margin:0 0 14px;
+ background:linear-gradient(180deg,#fff8e7 10%,#e8c766 55%,#d4af37 90%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.hero p.sub{color:var(--muted);max-width:640px;margin:0 auto 34px;font-size:16px}
+.hero p.sub b{color:var(--gold-soft);font-weight:600}
+
+/* search box */
+.studio{position:relative;z-index:2;max-width:820px;margin:0 auto;padding:26px;border-radius:22px;background:var(--panel);border:1px solid var(--border);backdrop-filter:blur(6px)}
+.studio::before{content:"";position:absolute;inset:0;border-radius:22px;padding:1px;pointer-events:none;
+ background:linear-gradient(160deg,rgba(212,175,55,.55),transparent 45%,rgba(255,45,85,.25));
+ -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:.6}
+.studio input[type=text]{width:100%;padding:15px 18px;font-size:16px;font-family:var(--sans);color:var(--text);background:rgba(10,20,32,.6);border:1px solid var(--border);border-radius:14px;outline:none;transition:.25s;margin-bottom:12px}
+.studio input[type=text]:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(212,175,55,.18)}
+.studio input[type=text]::placeholder{color:#5b6b7a}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.chip{flex:1 1 150px;background:rgba(10,20,32,.6);border:1px solid var(--border);color:var(--text);border-radius:12px;padding:11px 14px;font-size:14px;font-family:var(--sans);outline:none}
+.chip:focus{border-color:var(--gold)}
+.field{flex:1 1 220px}
+.field label{display:block;font-size:12px;color:var(--gold-dim);letter-spacing:.5px;margin-bottom:6px}
+.btn{border:none;cursor:pointer;border-radius:999px;padding:14px 30px;font-size:15px;font-family:var(--sans);letter-spacing:.4px;transition:.25s;font-weight:600}
+.btn.primary{background:linear-gradient(135deg,#e8c766,#d4af37);color:#201a05;box-shadow:0 10px 30px rgba(212,175,55,.35)}
+.btn.primary:hover{transform:translateY(-2px);box-shadow:0 16px 40px rgba(212,175,55,.45)}
+.btn.ghost{background:transparent;color:var(--gold-soft);border:1px solid var(--border)}
+.btn.ghost:hover{border-color:var(--gold);color:var(--gold)}
+.btn.full{width:100%}
+.hint{font-size:12px;color:#5b6b7a;margin-top:12px}
+.hint a{color:var(--gold-soft)}
+
+/* sections */
+.sec{padding:70px 0 84px;position:relative;z-index:1}
+.sec h2{font-family:var(--serif);font-size:clamp(24px,3.6vw,34px);margin:0 0 6px;color:var(--text)}
+.sec .sub2{color:var(--muted);margin:0 0 30px;font-size:15px}
+.sec h2::after{content:"";display:block;width:70px;height:2px;margin-top:12px;background:linear-gradient(90deg,var(--gold),transparent)}
+
+/* cards */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px}
+.card{position:relative;background:var(--panel);border:1px solid var(--border);border-radius:18px;padding:20px;transition:.3s}
+.card:hover{transform:translateY(-6px);border-color:rgba(212,175,55,.6);box-shadow:0 24px 60px rgba(0,0,0,.45)}
+.card h3{margin:0 0 10px;font-size:17px;font-family:var(--serif);color:var(--gold-soft)}
+.card p{color:var(--muted);font-size:14px;margin:0 0 14px}
+.card .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto}
+.pill{font-size:12px;padding:3px 10px;border-radius:999px;border:1px solid var(--border);color:var(--gold-soft)}
+.pill.red{color:var(--red-soft);border-color:rgba(255,45,85,.4)}
+.pill.green{color:#22c55e;border-color:rgba(34,197,94,.35)}
+
+/* trend list */
+.trend{display:flex;gap:14px;align-items:flex-start;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.trend:last-child{border-bottom:none}
+.trend .num{font-family:var(--serif);font-size:26px;line-height:1;color:transparent;-webkit-text-stroke:1px var(--gold);min-width:34px;text-align:center;padding-top:4px}
+.trend .tt{font-size:15px;color:var(--text);margin:0 0 4px;line-height:1.6}
+.trend .ch{font-size:12px;color:var(--muted);display:flex;gap:10px;flex-wrap:wrap}
+.trend .ch span b{color:var(--red-soft);font-weight:600}
+.trend .ch .v b{color:var(--gold-soft)}
+.trend a{color:var(--gold-soft);font-size:12px;text-decoration:none}
+
+/* output */
+.out{background:rgba(10,20,32,.72);border:1px solid var(--border);border-radius:18px;padding:24px;position:relative;margin-bottom:20px}
+.out .lbl{font-size:12px;letter-spacing:2px;color:var(--gold-dim);text-transform:uppercase;display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.out .lbl .copy{cursor:pointer;color:var(--gold-soft);font-size:12px;letter-spacing:0;border:1px solid var(--border);border-radius:999px;padding:3px 12px;text-transform:none}
+.out .lbl .copy:hover{background:rgba(212,175,55,.12)}
+.out pre{white-space:pre-wrap;font-family:var(--sans);font-size:14px;color:#e8e2d0;background:rgba(0,0,0,.28);border-radius:12px;padding:16px;margin:0;line-height:1.9;direction:ltr;text-align:left;max-height:340px;overflow:auto}
+.out pre.rtl{direction:rtl;text-align:right}
+
+/* loader */
+.loader{text-align:center;padding:30px;color:var(--muted)}
+.spin{width:34px;height:34px;border:3px solid var(--border);border-top-color:var(--gold);border-radius:50%;margin:0 auto 12px;animation:sp .8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+/* toast */
+#toast{position:fixed;bottom:22px;inset-inline-end:22px;background:var(--gold);color:#201a05;font-family:var(--sans);font-size:14px;padding:12px 20px;border-radius:999px;opacity:0;transform:translateY(12px);pointer-events:none;transition:.3s;z-index:99}
+#toast.show{opacity:1;transform:none}
+
+footer{border-top:1px solid var(--border);padding:26px 0;color:#5b6b7a;font-size:13px;position:relative;z-index:1}
+footer .logo{font-size:16px;margin-bottom:6px}
+
+.hidden{display:none!important}
+@media(max-width:680px){.nav{display:none}}
+</style>
+</head>
+<body>
+<div class="bg-ornament" aria-hidden="true"></div>
+
+<header class="top">
+  <div class="wrap">
+    <span class="logo">Shorts<b>Studio</b> <span class="badge">Veo Prompter</span></span>
+    <nav class="nav">
+      <a href="#search">ترند‌یاب</a>
+      <a href="#trends">شورت‌های ترند</a>
+      <a href="#prompts">پرامپت‌ها</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <div class="eyebrow"><span class="line"></span>TRENDING SHORTS RESEARCH<span class="line"></span></div>
+    <h1>موضوع بده، شورت ترند و پرامپت ویرال بگیر</h1>
+    <p class="sub">با یک کلیدواژه، <b>ترندترین شورت‌های یوتیوب</b> را پیدا کن، قلاب ویرال آن‌ها را تحلیل کن و <b>پرامپت بهینه‌شده گوگل Veo</b> برای ویدیو + تامنیل (با ابعاد 9:16) تحویل بگیر.</p>
+  </div>
+</section>
+
+<section class="sec" id="search" style="padding-top:0">
+  <div class="wrap">
+    <div class="studio">
+      <input type="text" id="topic" placeholder="موضوع را بنویس؛ مثلاً: حرکات خنده‌دار حیوانات">
+      <div class="row">
+        <div class="field chip">
+          <label>زیرمجموعه / نیچ</label>
+          <input type="text" id="niche" class="chip" style="width:100%" placeholder="اختیاری؛ مثلاً سگ، بچه‌بوزینه">
+        </div>
+        <div class="field chip">
+          <label>سبک ویدیو</label>
+          <select id="style" class="chip" style="width:100%">
+            <option value="cinematic">سینمایی</option>
+            <option value="hyperreal">هایپررئال</option>
+            <option value="claymation">کلی‌موشن (خمیری)</option>
+            <option value="cute">شایان و ناز</option>
+            <option value="cartoon">کارتون/انیمیشن</option>
+            <option value="viral-doc">مستند وایرال</option>
+          </select>
+        </div>
+      </div>
+      <div class="row" style="margin-top:6px">
+        <button class="btn primary" style="flex:1" id="runBtn">🔎 پیدا کن و بساز</button>
+      </div>
+      <details class="hint">
+        <summary>⚙️ تنظیم API Key یوتیوب (برای جستجوی ترند واقعی — یک‌بار)</summary>
+        <div class="row" style="margin-top:10px">
+          <input type="text" id="apikey" class="chip" placeholder="AIza… (کلید YouTube Data API v3)">
+          <button class="btn ghost" id="saveKey">ذخیره</button>
+        </div>
+        <p>در <a href="https://console.cloud.google.com/apis/library/youtube.googleapis.com" target="_blank" rel="noopener">Google Cloud Console</a> یک پروژه بسازید، <b>YouTube Data API v3</b> را فعال و کلید بسازید. کلید شما فقط در همین مرورگر (localStorage) ذخیره می‌شود. بدون کلید هم کار می‌کند: پرامپت‌ها با حالت شبیه‌سازی ترند ساخته می‌شوند.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="trends">
+  <div class="wrap">
+    <h2>شورت‌های ترند این موضوع</h2>
+    <p class="sub2">بالاترین‌ها بر اساس بازدید — برچسب قلاب، بن‌رل و CTA خودکار استخراج شده است.</p>
+    <div id="trendWrap"></div>
+  </div>
+</section>
+
+<section class="sec" id="prompts">
+  <div class="wrap">
+    <h2>پرامپت‌های آماده</h2>
+    <p class="sub2">کپی کن، ببر توی <b>Google Veo</b> (ویدیو) و <b>طراحی‌گر ترند/ایماجن (تامنیل)</b> — همه‌چیز برای چرخه بی‌پایان 9:16 بهینه شده است.</p>
+    <div id="promptWrap"></div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="logo">Shorts<b>Studio</b> ◆ Veo</div>
+    <div>برای ساخت شورت‌های وایرال و بدون چهره — پرامپت ویدیو + تامنیل بهینه.</div>
+  </div>
+</footer>
+
+<div id="toast"></div>
+
+<script>
+(function(){
+"use strict";
+var LS_KEY="yt_api_key";
+var styleNames={cinematic:"cinematic",hyperreal:"hyperreal",claymation:"claymation",cute:"cute",cartoon:"cartoon","viral-doc":"viral-doc"};
+
+var $=function(id){return document.getElementById(id)};
+var apiKey=localStorage.getItem(LS_KEY)||"";
+if(apiKey) $("apikey").value=apiKey;
+
+$("saveKey").addEventListener("click",function(){
+  var k=$("apikey").value.trim();
+  if(k) localStorage.setItem(LS_KEY,k);
+  else localStorage.removeItem(LS_KEY);
+  apiKey=k;
+  toast("کلید ذخیره شد");
+});
+
+function copyBtn(e){var pre=e.parentNode.parentNode.querySelector("pre");var el=document.createElement("textarea");el.value=pre.textContent;document.body.appendChild(el);el.select();try{document.execCommand("copy")}catch(err){}document.body.removeChild(el);toast("کپی شد ✓");}
+
+function toast(m){var t=$("toast");t.textContent=m;t.classList.add("show");setTimeout(function(){t.classList.remove("show")},1600);}
+
+function fmtViews(n){
+  if(n==null) return "—";
+  if(n>=1e9) return (n/1e9).toFixed(2)+"B";
+  if(n>=1e6) return (n/1e6).toFixed(1)+"M";
+  if(n>=1e3) return (n/1e3).toFixed(1)+"K";
+  return n;
+}
+
+/* ---------- YouTube trending (real or simulated) ---------- */
+function searchYouTube(q,niche,cb){
+  if(!apiKey) cb(null);
+  else{
+    var query=(q+" "+(niche||"")).trim();
+    var url="https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&videoDuration=short&maxResults=16&order=viewCount&q="+encodeURIComponent(query)+"&key="+encodeURIComponent(apiKey);
+    fetch(url).then(function(r){if(!r.ok)throw new Error(r.status);return r.json()}).then(function(j){
+      var ids=(j.items||[]).map(function(i){return i.id.videoId}).join(",");
+      if(!ids)return cb([]);
+      fetch("https://www.googleapis.com/youtube/v3/videos?part=statistics,snippet&id="+encodeURIComponent(ids)+"&key="+encodeURIComponent(apiKey))
+        .then(function(r){return r.json()}).then(function(j2){
+          var out=(j2.items||[]).map(function(it){
+            return {id:it.id,title:it.snippet.title,channel:it.snippet.channelTitle,views:parseInt(it.statistics&&it.statistics.viewCount||0,10)};
+          }).sort(function(a,b){return b.views-a.views});
+          cb(out);
+        }).catch(function(){cb([])});
+    }).catch(function(){cb([])});
+  }
+}
+
+function simulateTrends(q,niche){
+  var ideas=[
+    q+" but nobody expects the ending",
+    q+" satisfying compilation (watch till the end)",
+    "POV: " + q + " in real life",
+    q+" — this will make you laugh in 1 second",
+    "The best of " + q + " ever recorded",
+    q+" are funnier than humans 😂",
+    "Extreme close-up: " + (niche||q),
+    q+" caught in 4K slow motion",
+    q+": the viral moment you can't unsee",
+    "Only 1% noticed this detail in " + q
+  ];
+  return ideas.map(function(t,i){
+    return {id:"sim"+i,title:t,channel:["@viralclip","@shortsplanet","@dailywow","@funhub","@topshorts"][i%5],
+            views:[2.1e6,1.7e6,1.4e6,9.2e5,7.8e5,6.1e5,4.4e5,3.2e5,2.6e5,1.9e5][i],sim:true};
+  });
+}
+
+function analyzeTrends(list){
+  var agg={hook:[],loop:0,cta:0};
+  ["POV","ending","till the end","laugh","satisfying","can't unsee","1 second","detail","best of","%","0"]
+    .forEach(function(w){
+      var hit=list.filter(function(t){return t.title.toLowerCase().indexOf(w)>-1}).length;
+      if(hit>0) agg.hook.push({word:w,count:hit});
+    });
+  agg.hook.sort(function(a,b){return b.count-a.count});
+  list.forEach(function(t){if(/loop|end|again|repeat/i.test(t.title))agg.loop++});
+  list.forEach(function(t){if(/subscribe|follow|share|comment|watch till/i.test(t.title))agg.cta++});
+  return agg;
+}
+
+/* ---------- prompt builders ---------- */
+function viralHookText(agg){
+  if(!agg||!agg.hook.length) return "یک قلاب بازمان (Curiosity Gap) با شروع ۰.۵ ثانیه‌ای + پایانی قابل چرخش (Loop)";
+  var top=agg.hook.slice(0,3).map(function(h){return h.word}).join("، ");
+  return "قلاب غالب از ترندهای یوتیوب: «"+top+"»";
+}
+
+function buildStyle(style){
+  var s={
+    cinematic:"سینمایی، نور نارنجی گرم هنگام غروب، عمق میدان کم، حرکت دوربین آهسته و نرم (نمای close-up به wide)، گِرِین ظریف فیلما",
+    hyperreal:"هایپررئال، جزئیات فوقالعاده دقیق بافت و مو، نور استودیویی سافت‌باکس، رندر سینمایی، عمق میدان واقعی",
+    claymation:"کلی‌موشن با شخصیت‌های خمیری دست‌ساز، بافت پلاستیلین، نور استودیویی گرم، انیمیشن گامی روان و لطیف",
+    cute:"شایان/کیوت‌کور، پالت پاستلی کِرِم و صورتی، نور نرم، چشم‌های درشت، حس گرم و کودکانه",
+    cartoon:"انیمیشن ۳۰FPS به سبک کارتونی پرانرژی، خط‌های متحرک، رنگ‌های اشباع، اغراق کمدی در حرکت",
+    "viral-doc":"مستند وایرال: نور طبیعی، نمای واقع‌گرایانه، تکان‌های دستی ظریف دوربین، فضای صمیمی و شفاف"
+  };
+  return s[style]||s.cinematic;
+}
+
+function buildVideoPrompt(topic,niche,style,agg){
+  var subj=(niche?niche+" ("+topic+")":topic);
+  var st=buildStyle(style);
+  return "Google Veo 3 — vertical shorts (9:16, 1080x1920, 6-8s, seamless loop):\n"+
+  "A hyper-engaging vertical short about: "+subj+".\n"+
+  "HOOK (0-1s): an instantly eye-catching opening that breaks the scroll — start on a surprising detail or an exaggerated close-up of the subject mid-action, with a bold moment that makes viewers stop.\n"+
+  "ACTION (1-5s): fluid, satisfying movement with exaggerated character — follow the most interesting gesture/behavior, building gentle escalation in energy; keep the main subject clearly in frame, rule-of-thirds centered.\n"+
+  "PAYOFF (5-7s): a twist or a blessed final moment (smile, surprised reaction, unexpected symmetry) that rewards watching.\n"+
+  "LOOP (6-8s): cut closes back seamlessly to frame 1 so the clip loops forever without a jump.\n"+
+  "STYLE: "+st+".\n"+
+  "CAMERA: 24mm cinematic lens, subtle handheld drift, shallow depth of field, slow push-in toward the payoff.\n"+
+  "LIGHTING: soft golden-hour key light with a gentle rim, skin/ fur texture visible, no hard shadows.\n"+
+  "RULES: photoreal quality, stable character identity across all frames, NO text, NO watermark, NO logo, NO voiceover, NO subtitles — pure visual.\n"+
+  "VIBE: heartwarming + mildly comedic + highly satisfying; feels native to YouTube Shorts and TikTok trends.\n"+
+  "Viral hook reference: "+viralHookText(agg)+".";
+}
+
+function buildThumbnailPrompt(topic,niche,style){
+  var subj=niche?niche+" ("+topic+")":topic;
+  var st=buildStyle(style);
+  return "YouTube Shorts thumbnail — vertical 9:16 or 16:9, ultra high detail, 4K:\n"+
+  "Subject: "+subj+" in a single dramatic, high-energy moment (mid-action, eyes toward camera).\n"+
+  "Composition: subject slightly right-of-center, generous headroom, bold contrast between subject and clean background.\n"+
+  "Expression/mood: an exaggerated, meme-worthy emotion (wide surprise, pure joy, or hilarious confusion) that reads clearly at tiny mobile size.\n"+
+  "Lighting: studio-grade, colorful, punchy — golden rim light + soft key, vibrant saturated colors.\n"+
+  "Style: dense premium render, shallow depth of field, crisp texture ("+st.split("،")[0].replace("سینمایی","cinematic").replace("کلی","clay")+" look).\n"+
+  "Reserve clean negative space at the top for the title text. No watermark, no subtitles, no hands cropped awkwardly.";
+}
+
+function buildTitle(topic,niche,agg){
+  var h=aggregateTitle(agg);
+  var t="";
+  switch(h.kind){
+    case "pov": t="POV: "+topic+" render ya na — "+(niche||"bebin ta akhar");break;
+    case "ending": t="If you don't laugh, I delete the video 😭 "+topic+" (watch till the end)";break;
+    case "math": t="Only 1% notice THIS in "+topic+" 👀 (test yourself)";break;
+    default:
+      t="Top "+10+" "+topic+(niche?" "+(niche+" "):" ")+"moments that broke the internet";
+  }
+  return {title:t,
+    tags: "#shorts #"+topic.replace(/[^A-Za-z0-9\u0600-\u06FF]/g,"")+" #viral #fyp #foryou #trending #funny"+
+          (niche?" #"+niche.replace(/[^A-Za-z0-9\u0600-\u06FF]/g,""):"")};
+}
+function aggregateTitle(agg){
+  if(!agg.hook.length) return {kind:"plain"};
+  var top=agg.hook[0].word.toLowerCase();
+  if(top==="pov") return {kind:"pov"};
+  if(top.indexOf("end")>-1||top.indexOf("loop")>-1) return {kind:"ending"};
+  if(top.indexOf("%")>-1||top.indexOf("detail")>-1||top.indexOf("0")>-1) return {kind:"math"};
+  return {kind:"plain"};
+}
+
+/* ---------- render ---------- */
+function renderTrends(list,sim){
+  var w=$("trendWrap");w.innerHTML="";
+  if(!list||!list.length){
+    w.innerHTML='<div class="loader">هیچ داده‌ای یافت نشد — موضوع دیگری امتحان کنید یا API Key تنظیم کنید.</div>';return;
+  }
+  var agg=analyzeTrends(list);
+  window._agg=agg;
+  list.slice(0,10).forEach(function(t,i){
+    var el=document.createElement("div");el.className="trend";
+    el.innerHTML='<div class="num">'+(i+1)+'</div>'+
+      '<div style="flex:1">'+
+        '<p class="tt">'+esc(t.title)+'</p>'+
+        '<div class="ch"><span>'+esc(t.channel)+'</span><span class="v"><b>'+fmtViews(t.views)+'</b> بازدید</span>'+
+        (t.sim?'<span class="pill green">شبیه‌سازی</span>':'')+
+        (t.id&&t.id.indexOf("sim")!==0?'<a href="https://youtu.be/'+t.id+'" target="_blank" rel="noopener">▶ مشاهده</a>':'')+
+        '</div></div>';
+    w.appendChild(el);
+  });
+  var aggEl=document.createElement("div");aggEl.className="grid";aggEl.style.marginTop="22px";
+  aggEl.innerHTML=
+    '<div class="card"><h3>🔗 قلاب غالب (Hook)</h3><p>'+viralHookText(agg)+'</p><div class="meta">'+
+      agg.hook.slice(0,4).map(function(h){return '<span class="pill red">'+esc(h.word)+' ×'+h.count+'</span>'}).join("")+'</div></div>'+
+    '<div class="card"><h3>🔁 چرخه (Loop)</h3><p>'+(agg.loop?'بسیاری از ویدیوهای ترند این موضوع پایانی حلقه‌شونده دارند — همان الگو را در پرامپت حفظ می‌کنیم.':'الگوی چرخش کمتر دیده می‌شود؛ پرامپت ما لوپ پایانی را به‌صورت پیش‌فرض اضافه می‌کند.')+'</p></div>'+
+    '<div class="card"><h3>📣 CTA</h3><p>'+(agg.cta?'عنوان‌ها اغلب «اشتراک/کامنت» دارند. در توضیحات هشتگ و CTA افزودیم.':'CTA در عنوان‌ها کم است — فرصت: فقط با قلاب تصویری برجسته شوید.')+'</p></div>';
+  w.appendChild(aggEl);
+}
+
+function renderPrompts(topic,niche,style){
+  var agg=window._agg||analyzeTrends(simulateTrends(topic,niche));
+  var vp=buildVideoPrompt(topic,niche,style,agg);
+  var tp=buildThumbnailPrompt(topic,niche,style);
+  var t=buildTitle(topic,niche,agg);
+  var w=$("promptWrap");w.innerHTML="";
+  function box(lbl,body,rtl){
+    var d=document.createElement("div");d.className="out";
+    d.innerHTML='<div class="lbl"><span>'+lbl+'</span><span class="copy">کپی</span></div><pre class="'+(rtl?'rtl':'')+'"></pre>';
+    d.querySelector("pre").textContent=body;
+    d.querySelector(".copy").addEventListener("click",copyBtn);
+    return d;
+  }
+  w.appendChild(box("🎬 پرامپت ویدیو — Google Veo (عمودی 9:16)",vp,false));
+  w.appendChild(box("🖼️ پرامپت تامنیل — برای طراح ترند/تصویر",tp,false));
+  w.appendChild(box("📝 عنوان + هشتگ پیشنهادی (کپی جداگانه)",t.title+"\n\n"+t.tags,true));
+  w.appendChild(box("🚀 راهنمای وایرال‌سازی (شورت ۶–۸ ثانیه)","",true));
+  w.lastChild.querySelector("pre").textContent=
+    "1) ۰–۱ ثانیه: قلاب را با بزرگ‌ترین بهانه‌ی توجه باز کن (بازکننده اسکرول).\n"+
+    "2) ۱–۵ ثانیه: یک حرکت رضایت‌بخش (Satisfying) که بالا و پایین دارد.\n"+
+    "3) ۵–۷ ثانیه: برگردان پایانی / لبخند / واکنش غیرمنتظره.\n"+
+    "4) ۶–۸ ثانیه: هر دو فریم اول و آخر روی هم بیفتند تا لوپ بی‌پایان شود.\n"+
+    "5) بدون متن، بدون لگو، بدون زیرنویس — فقط تصویر خالص برای چرخش دوباره‌ای.\n"+
+    "6) Publish در بازه ۱۸:۰۰–۲۲:۰۰ به وقت هدف و کامنت‌ها را به CTA دعوت کن.";
+  $("prompts").scrollIntoView({behavior:"smooth"});
+}
+
+function esc(s){var d=document.createElement("div");d.textContent=String(s==null?"":s);return d.innerHTML;}
+
+$("runBtn").addEventListener("click",function(){
+  var topic=$("topic").value.trim();
+  if(!topic){toast("اول موضوع را بنویس");$("topic").focus();return;}
+  var niche=$("niche").value.trim();
+  var style=styleNames[$("style").value]||"cinematic";
+  $("trendWrap").innerHTML='<div class="loader"><div class="spin"></div>در حال جستجوی ترندهای یوتیوب…</div>';
+  searchYouTube(topic,niche,function(list){
+    if(!list) list=simulateTrends(topic,niche);
+    renderTrends(list);
+    renderPrompts(topic,niche,style);
+    $("trends").scrollIntoView({behavior:"smooth"});
+  });
+});
+
+/* init with a sample so page isn't empty */
+(function(){
+  var s=simulateTrends("حرکات خنده‌دار حیوانات","");
+  renderTrends(s);
+  renderPrompts("حرکات خنده‌دار حیوانات","","cinematic");
+})();
+})();
+</script>
+</body>
+</html>
