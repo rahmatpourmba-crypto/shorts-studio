@@ -182,7 +182,7 @@ footer .logo{font-size:16px;margin-bottom:6px}
 <section class="sec" id="trends">
   <div class="wrap">
     <h2>شورت‌های ترند این موضوع</h2>
-    <p class="sub2">بالاترین‌ها بر اساس بازدید — برچسب قلاب، بن‌رل و CTA خودکار استخراج شده است.</p>
+    <p class="sub2">بالاترین‌ها بر اساس بازدید در <b>۳ ساعت گذشته</b> — برچسب قلاب، بن‌رل و CTA خودکار استخراج شده است.</p>
     <div id="trendWrap"></div>
   </div>
 </section>
@@ -236,11 +236,16 @@ function fmtViews(n){
 }
 
 /* ---------- YouTube trending (real or simulated) ---------- */
+function recentISO(hours){
+  var d=new Date(Date.now()-hours*3600*1000);
+  return d.toISOString();
+}
+
 function searchYouTube(q,niche,cb){
   if(!apiKey) cb(null);
   else{
     var query=(q+" "+(niche||"")).trim();
-    var url="https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&videoDuration=short&maxResults=16&order=viewCount&q="+encodeURIComponent(query)+"&key="+encodeURIComponent(apiKey);
+    var url="https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&videoDuration=short&maxResults=24&order=viewCount&publishedAfter="+encodeURIComponent(recentISO(3))+"&relevanceLanguage=fa&q="+encodeURIComponent(query)+"&key="+encodeURIComponent(apiKey);
     fetch(url).then(function(r){if(!r.ok)throw new Error(r.status);return r.json()}).then(function(j){
       var ids=(j.items||[]).map(function(i){return i.id.videoId}).join(",");
       if(!ids)return cb([]);
@@ -362,8 +367,12 @@ function aggregateTitle(agg){
 function renderTrends(list,sim){
   var w=$("trendWrap");w.innerHTML="";
   if(!list||!list.length){
-    w.innerHTML='<div class="loader">هیچ داده‌ای یافت نشد — موضوع دیگری امتحان کنید یا API Key تنظیم کنید.</div>';return;
+    w.innerHTML='<div class="loader">در ۳ ساعت گذشته ویدیویی در این موضوع یافت نشد — موضوع را عوض کنید یا دوره را گسترده‌تر کنید.</div>';return;
   }
+  var status=sim
+    ? '<div class="pill red" style="margin-bottom:14px">● حالت آزمایشی (شبیه‌سازی) — کلید API ناسازگار یا خطای شبکه</div>'
+    : '<div class="pill green" style="margin-bottom:14px">● ترند واقعی یوتیوب — ۳ ساعت گذشته</div>';
+  w.insertAdjacentHTML("beforeend",status);
   var agg=analyzeTrends(list);
   window._agg=agg;
   list.slice(0,10).forEach(function(t,i){
@@ -422,8 +431,9 @@ $("runBtn").addEventListener("click",function(){
   var style=styleNames[$("style").value]||"cinematic";
   $("trendWrap").innerHTML='<div class="loader"><div class="spin"></div>در حال جستجوی ترندهای یوتیوب…</div>';
   searchYouTube(topic,niche,function(list){
-    if(!list) list=simulateTrends(topic,niche);
-    renderTrends(list);
+    var isSim=false;
+    if(!list){ list=simulateTrends(topic,niche); isSim=true; }
+    renderTrends(list,isSim);
     renderPrompts(topic,niche,style);
     $("trends").scrollIntoView({behavior:"smooth"});
   });
@@ -432,7 +442,7 @@ $("runBtn").addEventListener("click",function(){
 /* init with a sample so page isn't empty */
 (function(){
   var s=simulateTrends("حرکات خنده‌دار حیوانات","");
-  renderTrends(s);
+  renderTrends(s,true);
   renderPrompts("حرکات خنده‌دار حیوانات","","cinematic");
 })();
 })();
