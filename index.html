@@ -252,7 +252,10 @@ function searchYouTube(q,niche,cb){
       fetch("https://www.googleapis.com/youtube/v3/videos?part=statistics,snippet&id="+encodeURIComponent(ids)+"&key="+encodeURIComponent(apiKey))
         .then(function(r){return r.json()}).then(function(j2){
           var out=(j2.items||[]).map(function(it){
-            return {id:it.id,title:it.snippet.title,channel:it.snippet.channelTitle,views:parseInt(it.statistics&&it.statistics.viewCount||0,10)};
+            return {id:it.id,title:it.snippet.title,channel:it.snippet.channelTitle,
+                    desc:(it.snippet.description||"").slice(0,250),
+                    tags:(it.snippet.tags||[]).slice(0,12).join(" "),
+                    views:parseInt(it.statistics&&it.statistics.viewCount||0,10)};
           }).sort(function(a,b){return b.views-a.views});
           cb(out);
         }).catch(function(){cb([])});
@@ -309,6 +312,52 @@ function buildStyle(style){
     "viral-doc":"مستند وایرال: نور طبیعی، نمای واقع‌گرایانه، تکان‌های دستی ظریف دوربین، فضای صمیمی و شفاف"
   };
   return s[style]||s.cinematic;
+}
+
+/* Extract a clean subject phrase from a real viral video (title+tags+desc) */
+function extractSubject(v){
+  var txt=(v.title+" "+v.tags+" "+(v.desc||"")).replace(/(#\S+)|(@\S+)|https?:\S+/g," ").replace(/\d+/g," ");
+  var stop=new RegExp("\\b(pov|the|and|with|this|for|how|what|why|watch|till|end|shorts|short|video|today|part|mine|yours|of|to|in|on|is|are|a|an|it|vs|versus|best|top|funny|hilarious|amazing|crazy|u|ur|your|me|my|we|our|their|she|he|they|its|really|very|so|such)\\b","gi");
+  var words=txt.split(/\s+/).filter(function(w){return w.length>2 && !stop.test(w)});
+  var freq={};
+  words.forEach(function(w){freq[w.toLowerCase()]=(freq[w.toLowerCase()]||0)+1});
+  var ranked=Object.keys(freq).sort(function(a,b){return freq[b]-freq[a]});
+  var top=ranked.slice(0,4);
+  if(top.length===0) return v.title.slice(0,60);
+  return top.join(", ");
+}
+
+function buildVideoSpecificPrompt(v,style){
+  var subj=extractSubject(v);
+  var st=buildStyle(style);
+  var hookFromTitle=/pov|watch till|till the end|1%|nobody|expects|wrong|gone wrong|wow|omg|bet you|can't|cannot|never|secret|final/i.test(v.title)?"curiosity + suspense":"unexpected/funny twist";
+  return "Google Veo 3 — vertical shorts (9:16, 1080x1920, 6-8s, seamless loop).\n"+
+  "Recreate the VIRAL MOMENT behind this real trending YouTube Short:\n"+
+  "▶ Trend title: \u201C"+v.title+"\u201D\n"+
+  "▶ Key subject / cast: "+subj+"\n"+
+  "▶ Context from original: "+((v.desc||"").slice(0,120)||"(no description)")+"\n\n"+
+  "SHOT PLAN:\n"+
+  "HOOK (0-1s): open mid-moment — the most striking frame already happening (subject in motion, exaggerated expression, perfect funny timing) with zero setup lag, so the scroll stops instantly.\n"+
+  "ACTION (1-5s): a clean, satisfying cause-and-effect sequence — the subject does the same recognizable behavior, escalating in a gentle comedic loop; camera stays tight on the action, rule-of-thirds.\n"+
+  "PAYOFF (5-7s): the money frame — a reaction (turn to camera / surprised eyes / dramatic fall / perfect symmetry) that rewards watching to the end.\n"+
+  "LOOP (6-8s): the last frame matches frame 1, so playback loops seamlessly forever.\n\n"+
+  "STYLE: "+st+"\n"+
+  "CAMERA: 24mm cinematic lens, subtle handheld organic drift, shallow depth of field, slow push-in toward the payoff.\n"+
+  "LIGHTING: soft golden-hour key + gentle rim light, natural textures (fur/skin/material), no harsh shadows.\n"+
+  "RULES: photoreal, one stable main subject throughout, NO text, NO watermark, NO subtitles, NO voiceover, NO duplicate of the original footage — an original visual in the same viral style.\n"+
+  "VIBE: heartwarming + comedic + satisfying. Hook style derived from the real trend: "+hookFromTitle+".";
+}
+
+function buildVideoSpecificThumbnail(v,style){
+  var subj=extractSubject(v);
+  var st=buildStyle(style);
+  return "YouTube Shorts thumbnail — vertical 9:16, ultra high detail, 4K:\n"+
+  "Inspired by the viral video: \u201C"+v.title+"\u201D\n"+
+  "Subject: "+subj+" caught in the single most dramatic, meme-worthy instant (eyes toward camera, exaggerated emotion — wide surprise / pure joy / comic panic).\n"+
+  "Composition: subject slightly off-center, generous headroom, clean high-contrast background that pops at tiny mobile size.\n"+
+  "Lighting: studio-grade, punchy — golden rim light + soft saturated key, vibrant colors.\n"+
+  "Style: premium dense render, shallow depth of field, crisp natural texture ("+(st.split("،")[0]).replace("سینمایی","cinematic")+" look).\n"+
+  "Reserve clean negative space at the top for the title text. No watermark, no subtitles.";
 }
 
 function buildVideoPrompt(topic,niche,style,agg){
@@ -383,7 +432,10 @@ function renderTrends(list,sim){
         '<div class="ch"><span>'+esc(t.channel)+'</span><span class="v"><b>'+fmtViews(t.views)+'</b> بازدید</span>'+
         (t.sim?'<span class="pill green">شبیه‌سازی</span>':'')+
         (t.id&&t.id.indexOf("sim")!==0?'<a href="https://youtu.be/'+t.id+'" target="_blank" rel="noopener">▶ مشاهده</a>':'')+
-        '</div></div>';
+        '</div>'+
+        (!t.sim?'<button class="btn ghost pt-btn" style="margin-top:10px;padding:8px 16px;font-size:13px">🎬 پرامپت از روی این ویدیو</button>':'')+
+        '</div>';
+    if(!t.sim){ el.querySelector(".pt-btn").addEventListener("click",function(){ renderPromptsFromVideo(t); }); }
     w.appendChild(el);
   });
   var aggEl=document.createElement("div");aggEl.className="grid";aggEl.style.marginTop="22px";
@@ -393,6 +445,25 @@ function renderTrends(list,sim){
     '<div class="card"><h3>🔁 چرخه (Loop)</h3><p>'+(agg.loop?'بسیاری از ویدیوهای ترند این موضوع پایانی حلقه‌شونده دارند — همان الگو را در پرامپت حفظ می‌کنیم.':'الگوی چرخش کمتر دیده می‌شود؛ پرامپت ما لوپ پایانی را به‌صورت پیش‌فرض اضافه می‌کند.')+'</p></div>'+
     '<div class="card"><h3>📣 CTA</h3><p>'+(agg.cta?'عنوان‌ها اغلب «اشتراک/کامنت» دارند. در توضیحات هشتگ و CTA افزودیم.':'CTA در عنوان‌ها کم است — فرصت: فقط با قلاب تصویری برجسته شوید.')+'</p></div>';
   w.appendChild(aggEl);
+}
+
+function promptBoxes(w){
+  function box(lbl,body,rtl){
+    var d=document.createElement("div");d.className="out";
+    d.innerHTML='<div class="lbl"><span>'+lbl+'</span><span class="copy">کپی</span></div><pre class="'+(rtl?'rtl':'')+'"></pre>';
+    d.querySelector("pre").textContent=body;
+    d.querySelector(".copy").addEventListener("click",copyBtn);
+    return d;
+  }
+  w.appendChild(box("🚀 راهنمای وایرال‌سازی (شورت ۶–۸ ثانیه)","",true));
+  w.lastChild.querySelector("pre").textContent=
+    "1) ۰–۱ ثانیه: قلاب را با بزرگ‌ترین بهانه‌ی توجه باز کن (بازکننده اسکرول).\n"+
+    "2) ۱–۵ ثانیه: یک حرکت رضایت‌بخش (Satisfying) که بالا و پایین دارد.\n"+
+    "3) ۵–۷ ثانیه: برگردان پایانی / لبخند / واکنش غیرمنتظره.\n"+
+    "4) ۶–۸ ثانیه: هر دو فریم اول و آخر روی هم بیفتند تا لوپ بی‌پایان شود.\n"+
+    "5) بدون متن، بدون لگو، بدون زیرنویس — فقط تصویر خالص برای چرخش دوباره‌ای.\n"+
+    "6) Publish در بازه ۱۸:۰۰–۲۲:۰۰ به وقت هدف و کامنت‌ها را به CTA دعوت کن.";
+  $("prompts").scrollIntoView({behavior:"smooth"});
 }
 
 function renderPrompts(topic,niche,style){
@@ -408,18 +479,33 @@ function renderPrompts(topic,niche,style){
     d.querySelector(".copy").addEventListener("click",copyBtn);
     return d;
   }
-  w.appendChild(box("🎬 پرامپت ویدیو — Google Veo (عمودی 9:16)",vp,false));
+  w.appendChild(box("🎬 پرامپت ویدیو — Google Veo (عمومی برای موضوع)",vp,false));
   w.appendChild(box("🖼️ پرامپت تامنیل — برای طراح ترند/تصویر",tp,false));
   w.appendChild(box("📝 عنوان + هشتگ پیشنهادی (کپی جداگانه)",t.title+"\n\n"+t.tags,true));
-  w.appendChild(box("🚀 راهنمای وایرال‌سازی (شورت ۶–۸ ثانیه)","",true));
-  w.lastChild.querySelector("pre").textContent=
-    "1) ۰–۱ ثانیه: قلاب را با بزرگ‌ترین بهانه‌ی توجه باز کن (بازکننده اسکرول).\n"+
-    "2) ۱–۵ ثانیه: یک حرکت رضایت‌بخش (Satisfying) که بالا و پایین دارد.\n"+
-    "3) ۵–۷ ثانیه: برگردان پایانی / لبخند / واکنش غیرمنتظره.\n"+
-    "4) ۶–۸ ثانیه: هر دو فریم اول و آخر روی هم بیفتند تا لوپ بی‌پایان شود.\n"+
-    "5) بدون متن، بدون لگو، بدون زیرنویس — فقط تصویر خالص برای چرخش دوباره‌ای.\n"+
-    "6) Publish در بازه ۱۸:۰۰–۲۲:۰۰ به وقت هدف و کامنت‌ها را به CTA دعوت کن.";
-  $("prompts").scrollIntoView({behavior:"smooth"});
+  promptBoxes(w,box);
+}
+
+function renderPromptsFromVideo(v){
+  var style=styleNames[$("style").value]||"cinematic";
+  var vp=buildVideoSpecificPrompt(v,style);
+  var tp=buildVideoSpecificThumbnail(v,style);
+  var w=$("promptWrap");w.innerHTML="";
+  var head=document.createElement("div");
+  head.className="card";
+  head.style.marginBottom="18px";
+  head.innerHTML='<h3 style="font-size:15px;color:var(--text)">🎯 پرامپت از روی این ویدیوی خاص:</h3><p style="margin:8px 0">'+esc(v.title)+'</p>'+
+    '<p class="ch" style="color:var(--muted);font-size:13px">'+esc(v.channel)+' · <b style="color:var(--gold-soft)">'+fmtViews(v.views)+'</b> بازدید</p>';
+  w.appendChild(head);
+  function box(lbl,body,rtl){
+    var d=document.createElement("div");d.className="out";
+    d.innerHTML='<div class="lbl"><span>'+lbl+'</span><span class="copy">کپی</span></div><pre class="'+(rtl?'rtl':'')+'"></pre>';
+    d.querySelector("pre").textContent=body;
+    d.querySelector(".copy").addEventListener("click",copyBtn);
+    return d;
+  }
+  w.appendChild(box("🎬 پرامپت ویدیو — بازسازی لحظه ترند (Google Veo 9:16)",vp,false));
+  w.appendChild(box("🖼️ پرامپت تامنیل — هم‌سبک با همین ویدیو",tp,false));
+  promptBoxes(w,box);
 }
 
 function esc(s){var d=document.createElement("div");d.textContent=String(s==null?"":s);return d.innerHTML;}
