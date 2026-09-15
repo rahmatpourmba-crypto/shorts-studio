@@ -208,10 +208,11 @@ footer .logo{font-size:16px;margin-bottom:6px}
 (function(){
 "use strict";
 var LS_KEY="yt_api_key";
+var DEFAULT_KEY="AIzaSyADZDWTZ4jgos6tn2e5vDF8ZF1wQeURq14";
 var styleNames={cinematic:"cinematic",hyperreal:"hyperreal",claymation:"claymation",cute:"cute",cartoon:"cartoon","viral-doc":"viral-doc"};
 
 var $=function(id){return document.getElementById(id)};
-var apiKey=localStorage.getItem(LS_KEY)||"";
+var apiKey=localStorage.getItem(LS_KEY)||DEFAULT_KEY;
 if(apiKey) $("apikey").value=apiKey;
 
 $("saveKey").addEventListener("click",function(){
